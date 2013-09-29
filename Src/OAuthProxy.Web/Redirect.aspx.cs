@@ -15,7 +15,7 @@ namespace OAuthProxy.Web
             try
             {
                 // Grab querystring parameters
-                var parameters = Request.QueryString;
+                var parameters = Request.QueryString; 
 
                 // Parse the url param
                 var encodedUrl = parameters["url"];
