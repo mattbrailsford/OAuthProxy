@@ -26,13 +26,10 @@ namespace OAuthProxy.Web
                 if(!Regex.IsMatch(url, "^https?://", RegexOptions.IgnoreCase))
                     throw new ArgumentException("Invalid url", "url");
 
-                // Remove the url param from parms collection
-                parameters.Remove("url");
-
                 // Construct final redirect url
                 var redirectUrl = url +
                     (url.IndexOf("?") >= 0 ? "&" : "?") +
-                    ConstructQueryString(parameters);
+                    ConstructQueryString(parameters, new[]{ "url" });
 
                 // Perform redirect
                 Response.StatusCode = 301;
@@ -40,7 +37,7 @@ namespace OAuthProxy.Web
                 Response.AddHeader("Location", redirectUrl);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Something went wrong so just return bad request
                 Response.StatusCode = 400;
@@ -48,10 +45,12 @@ namespace OAuthProxy.Web
             }
         }
 
-        public static string ConstructQueryString(NameValueCollection parameters)
+        public static string ConstructQueryString(NameValueCollection parameters, IEnumerable<string> ignore)
         {
             return string.Join("&", 
-                parameters.AllKeys.Select(name => 
+                parameters.AllKeys
+                .Where(x => ignore.All(y => y != x))
+                .Select(name => 
                     string.Concat(name, "=", HttpUtility.UrlEncode(parameters[name])))
                     .ToArray());
         }
