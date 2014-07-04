@@ -42,6 +42,7 @@ namespace OAuthProxy.Web
                 // Something went wrong so just return bad request
                 Response.StatusCode = 400;
                 Response.Status = "400 Bad Request";
+				Response.Write("<h1>"+ ex.Message +"</h1><p>"+ ex.StackTrace +"</p>");
             }
         }
 
